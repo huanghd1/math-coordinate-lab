@@ -2137,6 +2137,202 @@
       scroll-behavior: auto !important;
     }
   }
+  /* Mobile landscape is intentionally isolated from the desktop layout. */
+  .mobile-drawer-toggle,
+  .drawer-scrim { display: none; }
+
+  @media (max-width: 1024px) and (orientation: landscape) {
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden !important;
+      background: #05080e;
+    }
+    body { position: fixed; inset: 0; }
+    .app {
+      display: block !important;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
+      overflow: hidden !important;
+      border-radius: 0;
+    }
+    .stage {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
+      border-radius: 0;
+      z-index: 1;
+      overflow: hidden !important;
+    }
+    #scene,
+    #flat-canvas,
+    .css2d-layer {
+      width: 100%;
+      height: 100%;
+    }
+
+    .sidebar,
+    .exercise-panel {
+      position: fixed !important;
+      top: 0;
+      bottom: 0;
+      height: 100vh;
+      height: 100dvh;
+      max-height: none !important;
+      width: min(86vw, 360px) !important;
+      min-width: 0 !important;
+      z-index: 35;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      transition: transform 0.26s ease;
+      -webkit-overflow-scrolling: touch;
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+    .sidebar {
+      left: 0;
+      right: auto;
+      transform: translateX(-100%);
+      border-right: 1px solid var(--line-strong);
+      border-bottom: 0;
+    }
+    .exercise-panel {
+      left: auto;
+      right: 0;
+      transform: translateX(100%);
+      border-left: 1px solid var(--line-strong);
+    }
+    .app.drawer-left-open .sidebar { transform: translateX(0); }
+    .app.drawer-right-open .exercise-panel { transform: translateX(0); }
+    .app.left-collapsed .sidebar,
+    .app.right-collapsed .exercise-panel {
+      width: min(86vw, 360px) !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+    .sidebar { padding: 12px 12px 22px; }
+    .panel-inner { padding: 16px 15px 34px; }
+    .tree { max-height: none; }
+    .brand-sub { font-size: 10px; }
+    .sidebar-foot { display: none; }
+
+    .panel-toggle,
+    .float-restore,
+    .stage-topic-card,
+    .readout,
+    .range-panel,
+    .stage-hint,
+    .axis-key,
+    #auto-rotate {
+      display: none !important;
+    }
+    .stage-topbar {
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      z-index: 24;
+      pointer-events: none;
+    }
+    .stage-tools { pointer-events: auto; margin-left: auto; }
+    .tool-btn { width: 42px; height: 42px; }
+    .view-btn { min-width: 44px; height: 42px; }
+    .stage-controls {
+      position: static;
+      pointer-events: none;
+    }
+    .point-panel {
+      position: fixed !important;
+      left: 50%;
+      bottom: max(10px, env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      width: min(92vw, 430px);
+      z-index: 26;
+      padding: 7px 9px 8px;
+      pointer-events: auto;
+      background: rgba(8, 15, 26, 0.9);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .point-panel-head { margin-bottom: 5px; }
+    .point-inputs { gap: 5px; }
+    .point-field input { height: 38px; font-size: 16px; }
+    .point-caption { margin-top: 4px; font-size: 9px; }
+
+    .mobile-drawer-toggle {
+      display: grid;
+      position: fixed;
+      top: 50%;
+      z-index: 45;
+      width: 34px;
+      height: 66px;
+      margin-top: -33px;
+      padding: 0;
+      place-items: center;
+      border: 1px solid rgba(150, 190, 230, 0.22);
+      background: rgba(8, 15, 26, 0.62);
+      color: #bcd5ee;
+      font: 600 22px/1 "Segoe UI", sans-serif;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      touch-action: manipulation;
+      cursor: pointer;
+    }
+    .mobile-drawer-toggle-left {
+      left: 0;
+      border-left: 0;
+      border-radius: 0 13px 13px 0;
+    }
+    .mobile-drawer-toggle-right {
+      right: 0;
+      border-right: 0;
+      border-radius: 13px 0 0 13px;
+    }
+    .drawer-scrim {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      background: rgba(2, 7, 14, 0.52);
+      backdrop-filter: blur(1.5px);
+      -webkit-backdrop-filter: blur(1.5px);
+    }
+    .app.drawer-left-open .drawer-scrim,
+    .app.drawer-right-open .drawer-scrim {
+      display: block;
+    }
+
+    .param-field { padding: 9px 9px 8px; }
+    .param-number,
+    .param-select {
+      height: 36px;
+      min-height: 36px;
+      font-size: 14px;
+    }
+    .param-slider {
+      height: 28px;
+      margin-top: 5px;
+    }
+    .param-slider::-webkit-slider-thumb {
+      width: 18px;
+      height: 18px;
+    }
+    .param-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+    }
+    .param-row-label { font-size: 10px; }
+    .param-row-math .katex { font-size: 0.86rem; }
+    .knowledge-item { padding-top: 11px; padding-bottom: 11px; }
+    .group-head { min-height: 40px; }
+    .exercise-title { font-size: 22px; }
+    .exercise-statement { font-size: 12px; }
+  }
+
 </style>
 </head>
 <body>
@@ -2179,6 +2375,10 @@
     <canvas id="flat-canvas" aria-label="二维数学可视化画布" hidden></canvas>
     <div class="css2d-layer" id="css2d-layer" aria-hidden="true"></div>
     <div class="stage-vignette" aria-hidden="true"></div>
+
+    <button class="mobile-drawer-toggle mobile-drawer-toggle-left" id="mobile-left-toggle" type="button" aria-label="打开知识树" aria-expanded="false">‹</button>
+    <button class="mobile-drawer-toggle mobile-drawer-toggle-right" id="mobile-right-toggle" type="button" aria-label="打开参数面板" aria-expanded="false">›</button>
+    <div class="drawer-scrim" id="drawer-scrim"></div>
 
     <div class="theory-board" id="theory-board" hidden>
       <div class="theory-board-inner">
@@ -9183,7 +9383,9 @@ const state = {
   applyingHistory: false,
   suppressPanelClick: { left: false, right: false },
   axesVisible: true,
-  axesUserOverride: false
+  axesUserOverride: false,
+  mobileDrawer: null,
+  mobileResizeTimer: 0
 };
 
 const dom = {
@@ -9206,6 +9408,9 @@ const dom = {
   resetView: $('#reset-view'),
   autoRotate: $('#auto-rotate'),
   axesToggle: $('#toggle-axes'),
+  mobileLeftToggle: $('#mobile-left-toggle'),
+  mobileRightToggle: $('#mobile-right-toggle'),
+  drawerScrim: $('#drawer-scrim'),
   view3d: $('#view-3d'),
   view2d: $('#view-2d'),
   toggleLeft: $('#toggle-left'),
@@ -10697,6 +10902,42 @@ function applyAxesForTopic(item) {
   if (state.axesUserOverride) return;
   const has3DGeometry = Boolean(item && item.plot && item.plot.kind !== 'none' && !isFlatPlot(item));
   setAxesVisible(has3DGeometry);
+}
+
+function isMobileLandscape() {
+  return window.matchMedia('(max-width: 1024px) and (orientation: landscape)').matches;
+}
+
+function closeMobileDrawers() {
+  state.mobileDrawer = null;
+  dom.app.classList.remove('drawer-left-open', 'drawer-right-open');
+  if (dom.mobileLeftToggle) dom.mobileLeftToggle.setAttribute('aria-expanded', 'false');
+  if (dom.mobileRightToggle) dom.mobileRightToggle.setAttribute('aria-expanded', 'false');
+  if (sceneApi && sceneApi.resize) setTimeout(() => sceneApi.resize(), 280);
+}
+
+function openMobileDrawer(side) {
+  if (!isMobileLandscape()) return;
+  const isLeft = side === 'left';
+  state.mobileDrawer = side;
+  dom.app.classList.toggle('drawer-left-open', isLeft);
+  dom.app.classList.toggle('drawer-right-open', !isLeft);
+  if (dom.mobileLeftToggle) dom.mobileLeftToggle.setAttribute('aria-expanded', String(isLeft));
+  if (dom.mobileRightToggle) dom.mobileRightToggle.setAttribute('aria-expanded', String(!isLeft));
+  if (sceneApi && sceneApi.resize) sceneApi.resize();
+}
+
+function toggleMobileDrawer(side) {
+  if (state.mobileDrawer === side) closeMobileDrawers();
+  else openMobileDrawer(side);
+}
+
+function handleMobileViewportChange() {
+  closeMobileDrawers();
+  clearTimeout(state.mobileResizeTimer);
+  state.mobileResizeTimer = setTimeout(() => {
+    if (sceneApi && sceneApi.resize) sceneApi.resize();
+  }, 180);
 }
 
 function setStageTopic(item, isPreview) {
@@ -13897,6 +14138,37 @@ function showSceneFallback(error) {
 /* =========================================================================
    8. Bind UI + boot
    ========================================================================= */
+function bindMobileDrawer() {
+  if (dom.mobileLeftToggle) {
+    dom.mobileLeftToggle.addEventListener('click', () => toggleMobileDrawer('left'));
+  }
+  if (dom.mobileRightToggle) {
+    dom.mobileRightToggle.addEventListener('click', () => toggleMobileDrawer('right'));
+  }
+  if (dom.drawerScrim) {
+    dom.drawerScrim.addEventListener('click', closeMobileDrawers);
+  }
+  dom.tree.addEventListener('click', (event) => {
+    if (isMobileLandscape() && event.target.closest('.knowledge-item')) {
+      setTimeout(closeMobileDrawers, 80);
+    }
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeMobileDrawers();
+  });
+  const query = window.matchMedia('(max-width: 1024px) and (orientation: landscape)');
+  if (query.addEventListener) query.addEventListener('change', handleMobileViewportChange);
+  window.addEventListener('orientationchange', handleMobileViewportChange);
+  window.addEventListener('resize', () => {
+    if (!isMobileLandscape()) return;
+    clearTimeout(state.mobileResizeTimer);
+    state.mobileResizeTimer = setTimeout(() => {
+      if (sceneApi && sceneApi.resize) sceneApi.resize();
+    }, 80);
+  }, { passive: true });
+  closeMobileDrawers();
+}
+
 function bindEvents() {
   dom.searchInput.addEventListener('input', filterTree);
   dom.searchInput.addEventListener('keydown', (event) => {
@@ -13942,6 +14214,7 @@ function bindEvents() {
 
   bindPanelSplitter('left');
   bindPanelSplitter('right');
+  bindMobileDrawer();
   if ('ResizeObserver' in window) {
     new ResizeObserver(() => {
       const item = currentTopic();
