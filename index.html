@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
 <title>东东坐标系实验室 · 三维数学</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230a101a'/%3E%3Ctext x='50' y='70' font-size='62' text-anchor='middle' fill='%235eead4'%3E%E2%88%91%3C/text%3E%3C/svg%3E">
@@ -928,6 +928,18 @@
     display: flex;
     align-items: center;
     gap: 4px;
+  }
+  .point-close {
+    width: 22px;
+    height: 22px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1;
   }
   .point-clear {
     border: 0;
@@ -2139,6 +2151,9 @@
   }
   /* Mobile landscape is intentionally isolated from the desktop layout. */
   .mobile-drawer-toggle,
+  .mobile-point-toggle,
+  .mobile-only-tool,
+  .point-close,
   .drawer-scrim { display: none; }
 
   @media (max-width: 1024px) and (orientation: landscape) {
@@ -2183,6 +2198,7 @@
       bottom: 0;
       height: 100vh;
       height: 100dvh;
+      height: var(--app-vv-height, 100dvh);
       max-height: none !important;
       width: min(86vw, 360px) !important;
       min-width: 0 !important;
@@ -2193,20 +2209,23 @@
       -webkit-overflow-scrolling: touch;
       overflow-y: auto;
       overflow-x: hidden;
+      background: rgba(20, 25, 30, 0.85) !important;
+      backdrop-filter: blur(10px) saturate(1.1);
+      -webkit-backdrop-filter: blur(10px) saturate(1.1);
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     }
     .sidebar {
       left: 0;
       right: auto;
       transform: translateX(-100%);
-      border-right: 1px solid var(--line-strong);
+      border-right: 1px solid rgba(160, 200, 240, 0.16);
       border-bottom: 0;
     }
     .exercise-panel {
       left: auto;
       right: 0;
       transform: translateX(100%);
-      border-left: 1px solid var(--line-strong);
+      border-left: 1px solid rgba(160, 200, 240, 0.16);
     }
     .app.drawer-left-open .sidebar { transform: translateX(0); }
     .app.drawer-right-open .exercise-panel { transform: translateX(0); }
@@ -2217,7 +2236,7 @@
       pointer-events: auto !important;
     }
     .sidebar { padding: 12px 12px 22px; }
-    .panel-inner { padding: 16px 15px 34px; }
+    .panel-inner { padding: 16px 15px 34px; background: transparent; }
     .tree { max-height: none; }
     .brand-sub { font-size: 10px; }
     .sidebar-foot { display: none; }
@@ -2239,30 +2258,61 @@
       z-index: 24;
       pointer-events: none;
     }
-    .stage-tools { pointer-events: auto; margin-left: auto; }
+    .stage-tools { pointer-events: auto; margin-left: auto; gap: 5px; }
+    .stage-tool-row { gap: 5px; }
     .tool-btn { width: 42px; height: 42px; }
     .view-btn { min-width: 44px; height: 42px; }
+    .mobile-only-tool { display: grid; }
     .stage-controls {
       position: static;
       pointer-events: none;
     }
     .point-panel {
+      display: none;
       position: fixed !important;
-      left: 50%;
-      bottom: max(10px, env(safe-area-inset-bottom));
-      transform: translateX(-50%);
-      width: min(92vw, 430px);
-      z-index: 26;
-      padding: 7px 9px 8px;
+      right: 12px;
+      bottom: 68px;
+      left: auto;
+      transform: none;
+      width: min(78vw, 252px);
+      z-index: 44;
+      padding: 8px 10px 9px;
       pointer-events: auto;
-      background: rgba(8, 15, 26, 0.9);
+      border-color: rgba(160, 200, 240, 0.2);
+      background: rgba(14, 20, 28, 0.88);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.42);
     }
+    .app.point-open .point-panel { display: block; }
     .point-panel-head { margin-bottom: 5px; }
     .point-inputs { gap: 5px; }
     .point-field input { height: 38px; font-size: 16px; }
     .point-caption { margin-top: 4px; font-size: 9px; }
+    .point-close { display: grid; }
+    .mobile-point-toggle {
+      display: grid;
+      position: fixed;
+      right: 12px;
+      bottom: max(12px, env(safe-area-inset-bottom));
+      z-index: 46;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      place-items: center;
+      border: 1px solid rgba(160, 200, 240, 0.24);
+      border-radius: 50%;
+      background: rgba(8, 15, 26, 0.62);
+      color: #bcd5ee;
+      font: 600 17px/1 "Segoe UI", sans-serif;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      touch-action: manipulation;
+    }
+    .mobile-point-toggle.is-active {
+      color: #f4c575;
+      border-color: rgba(244, 197, 117, 0.55);
+    }
 
     .mobile-drawer-toggle {
       display: grid;
@@ -2316,7 +2366,9 @@
     .param-slider {
       height: 28px;
       margin-top: 5px;
+      touch-action: none;
     }
+    input[type="range"] { touch-action: none; }
     .param-slider::-webkit-slider-thumb {
       width: 18px;
       height: 18px;
@@ -2378,6 +2430,7 @@
 
     <button class="mobile-drawer-toggle mobile-drawer-toggle-left" id="mobile-left-toggle" type="button" aria-label="打开知识树" aria-expanded="false">‹</button>
     <button class="mobile-drawer-toggle mobile-drawer-toggle-right" id="mobile-right-toggle" type="button" aria-label="打开参数面板" aria-expanded="false">›</button>
+    <button class="mobile-point-toggle" id="mobile-point-toggle" type="button" aria-label="坐标点" aria-expanded="false">⌖</button>
     <div class="drawer-scrim" id="drawer-scrim"></div>
 
     <div class="theory-board" id="theory-board" hidden>
@@ -2423,6 +2476,12 @@
             <button class="view-btn" id="view-2d" type="button" aria-pressed="false">2D</button>
           </div>
           <div class="tool-row">
+            <button class="tool-btn mobile-only-tool" id="mobile-undo" type="button" title="撤回" aria-label="撤回">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 7 4 12l5 5"></path>
+                <path d="M4 12h9a6 6 0 0 1 0 12"></path>
+              </svg>
+            </button>
             <button class="tool-btn" id="reset-view" type="button" title="重置视角" aria-label="重置视角">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M4.8 9.2A7.5 7.5 0 1 1 4.5 15"></path>
@@ -2445,6 +2504,14 @@
                 <path d="M12 20V9"></path>
                 <path d="M16 20V6"></path>
                 <path d="M20 20V3"></path>
+              </svg>
+            </button>
+            <button class="tool-btn mobile-only-tool" id="toggle-fullscreen" type="button" title="全屏" aria-label="全屏">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M8 4H4v4"></path>
+                <path d="M16 4h4v4"></path>
+                <path d="M20 16v4h-4"></path>
+                <path d="M4 16v4h4"></path>
               </svg>
             </button>
           </div>
@@ -2481,6 +2548,7 @@
           <span class="point-head-actions">
             <button class="point-label-toggle" id="point-label-toggle" type="button" title="显示或隐藏坐标标签">标签</button>
             <button class="point-clear" id="point-clear" type="button">清除</button>
+            <button class="point-close mobile-only-tool" id="mobile-point-close" type="button" aria-label="关闭坐标输入">×</button>
           </span>
         </div>
         <div class="point-inputs">
@@ -9385,7 +9453,8 @@ const state = {
   axesVisible: true,
   axesUserOverride: false,
   mobileDrawer: null,
-  mobileResizeTimer: 0
+  mobileResizeTimer: 0,
+  mobilePointOpen: false
 };
 
 const dom = {
@@ -9410,6 +9479,11 @@ const dom = {
   axesToggle: $('#toggle-axes'),
   mobileLeftToggle: $('#mobile-left-toggle'),
   mobileRightToggle: $('#mobile-right-toggle'),
+  mobileUndo: $('#mobile-undo'),
+  fullscreenToggle: $('#toggle-fullscreen'),
+  mobilePointToggle: $('#mobile-point-toggle'),
+  mobilePointClose: $('#mobile-point-close'),
+  pointPanel: $('.point-panel'),
   drawerScrim: $('#drawer-scrim'),
   view3d: $('#view-3d'),
   view2d: $('#view-2d'),
@@ -10918,6 +10992,7 @@ function closeMobileDrawers() {
 
 function openMobileDrawer(side) {
   if (!isMobileLandscape()) return;
+  closeMobilePoint();
   const isLeft = side === 'left';
   state.mobileDrawer = side;
   dom.app.classList.toggle('drawer-left-open', isLeft);
@@ -10930,6 +11005,140 @@ function openMobileDrawer(side) {
 function toggleMobileDrawer(side) {
   if (state.mobileDrawer === side) closeMobileDrawers();
   else openMobileDrawer(side);
+}
+
+function closeMobilePoint() {
+  state.mobilePointOpen = false;
+  dom.app.classList.remove('point-open');
+  if (dom.mobilePointToggle) {
+    dom.mobilePointToggle.classList.remove('is-active');
+    dom.mobilePointToggle.setAttribute('aria-expanded', 'false');
+  }
+  if (dom.pointPanel) dom.pointPanel.style.bottom = '';
+}
+
+function openMobilePoint() {
+  if (!isMobileLandscape()) return;
+  closeMobileDrawers();
+  state.mobilePointOpen = true;
+  dom.app.classList.add('point-open');
+  if (dom.mobilePointToggle) {
+    dom.mobilePointToggle.classList.add('is-active');
+    dom.mobilePointToggle.setAttribute('aria-expanded', 'true');
+  }
+}
+
+function toggleMobilePoint() {
+  if (state.mobilePointOpen) closeMobilePoint();
+  else openMobilePoint();
+}
+
+function isEditableElement(element) {
+  return Boolean(element && element.matches && element.matches('input, select, textarea'));
+}
+
+function keyboardInset() {
+  if (!window.visualViewport) return 0;
+  return Math.max(0, window.innerHeight - (window.visualViewport.height + window.visualViewport.offsetTop));
+}
+
+function keepFocusedInputVisible() {
+  const active = document.activeElement;
+  if (!isMobileLandscape() || !isEditableElement(active)) return;
+  window.setTimeout(() => {
+    if (!document.activeElement || document.activeElement !== active) return;
+    active.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }, 90);
+}
+
+function syncVisualViewport() {
+  if (!window.visualViewport) return;
+  if (!isMobileLandscape()) {
+    document.documentElement.style.removeProperty('--app-vv-height');
+    if (dom.pointPanel) dom.pointPanel.style.bottom = '';
+    return;
+  }
+  const inset = keyboardInset();
+  if (inset > 80) {
+    document.documentElement.style.setProperty('--app-vv-height', `${Math.round(window.visualViewport.height)}px`);
+    if (state.mobilePointOpen && dom.pointPanel) {
+      dom.pointPanel.style.bottom = `${inset + 12}px`;
+    }
+    keepFocusedInputVisible();
+  } else {
+    document.documentElement.style.removeProperty('--app-vv-height');
+    if (dom.pointPanel) dom.pointPanel.style.bottom = '';
+  }
+}
+
+function injectPwaManifest() {
+  if (document.querySelector('link[rel="manifest"]')) return;
+  const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="#07111d"/><path d="M96 384V128h32v256zm0 0h320v-32H96z" fill="#5eead4"/><path d="M144 320V224h32v96zm64 0V160h32v160zm64 0V256h32v64zm64 0V192h32v128z" fill="#f4c575"/><circle cx="112" cy="112" r="24" fill="#f472b6"/></svg>`;
+  const manifest = {
+    name: '东东坐标系实验室',
+    short_name: '坐标系实验室',
+    description: '面向高中数学与大学数学的交互式 3D 坐标系实验室',
+    start_url: window.location.origin + window.location.pathname,
+    scope: window.location.origin + window.location.pathname.replace(/[^/]*$/, ''),
+    display: 'fullscreen',
+    display_override: ['fullscreen', 'standalone'],
+    orientation: 'landscape',
+    background_color: '#07111d',
+    theme_color: '#07111d',
+    icons: [
+      { src: `data:image/svg+xml,${encodeURIComponent(iconSvg)}`, sizes: '512x512', type: 'image/svg+xml', purpose: 'any' }
+    ]
+  };
+  const link = document.createElement('link');
+  link.rel = 'manifest';
+  link.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' }));
+  document.head.appendChild(link);
+  const theme = document.createElement('meta');
+  theme.name = 'theme-color';
+  theme.content = '#07111d';
+  document.head.appendChild(theme);
+  const capable = document.createElement('meta');
+  capable.name = 'mobile-web-app-capable';
+  capable.content = 'yes';
+  document.head.appendChild(capable);
+  const appleCapable = document.createElement('meta');
+  appleCapable.name = 'apple-mobile-web-app-capable';
+  appleCapable.content = 'yes';
+  document.head.appendChild(appleCapable);
+  const appleStatus = document.createElement('meta');
+  appleStatus.name = 'apple-mobile-web-app-status-bar-style';
+  appleStatus.content = 'black-translucent';
+  document.head.appendChild(appleStatus);
+  if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
+}
+
+function updateFullscreenButton() {
+  if (!dom.fullscreenToggle) return;
+  const active = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+  dom.fullscreenToggle.classList.toggle('is-active', active);
+  dom.fullscreenToggle.setAttribute('aria-pressed', String(active));
+  dom.fullscreenToggle.title = active ? '退出全屏' : '全屏';
+}
+
+async function toggleFullscreen() {
+  try {
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      if (document.exitFullscreen) await document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      return;
+    }
+    const root = document.documentElement;
+    if (root.requestFullscreen) await root.requestFullscreen();
+    else if (root.webkitRequestFullscreen) root.webkitRequestFullscreen();
+    else return;
+    if (screen.orientation && screen.orientation.lock) {
+      try { await screen.orientation.lock('landscape'); } catch (error) { /* unsupported / not permitted */ }
+    }
+  } catch (error) {
+    /* Fullscreen can be blocked by the browser; the button remains a no-op fallback. */
+  }
 }
 
 function handleMobileViewportChange() {
@@ -14139,14 +14348,39 @@ function showSceneFallback(error) {
    8. Bind UI + boot
    ========================================================================= */
 function bindMobileDrawer() {
+  injectPwaManifest();
   if (dom.mobileLeftToggle) {
     dom.mobileLeftToggle.addEventListener('click', () => toggleMobileDrawer('left'));
   }
   if (dom.mobileRightToggle) {
     dom.mobileRightToggle.addEventListener('click', () => toggleMobileDrawer('right'));
   }
+  if (dom.mobilePointToggle) {
+    dom.mobilePointToggle.addEventListener('click', toggleMobilePoint);
+  }
+  if (dom.mobilePointClose) {
+    dom.mobilePointClose.addEventListener('click', closeMobilePoint);
+  }
+  if (dom.mobileUndo) {
+    dom.mobileUndo.addEventListener('click', undoLastChange);
+  }
+  if (dom.fullscreenToggle) {
+    dom.fullscreenToggle.addEventListener('click', toggleFullscreen);
+  }
   if (dom.drawerScrim) {
     dom.drawerScrim.addEventListener('click', closeMobileDrawers);
+  }
+  document.addEventListener('pointerdown', (event) => {
+    if (!state.mobilePointOpen) return;
+    if (event.target.closest('.point-panel') || event.target.closest('#mobile-point-toggle')) return;
+    closeMobilePoint();
+  }, true);
+  document.addEventListener('focusin', keepFocusedInputVisible);
+  document.addEventListener('fullscreenchange', updateFullscreenButton);
+  document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', syncVisualViewport);
+    window.visualViewport.addEventListener('scroll', syncVisualViewport);
   }
   dom.tree.addEventListener('click', (event) => {
     if (isMobileLandscape() && event.target.closest('.knowledge-item')) {
@@ -14154,7 +14388,10 @@ function bindMobileDrawer() {
     }
   });
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closeMobileDrawers();
+    if (event.key === 'Escape') {
+      closeMobileDrawers();
+      closeMobilePoint();
+    }
   });
   const query = window.matchMedia('(max-width: 1024px) and (orientation: landscape)');
   if (query.addEventListener) query.addEventListener('change', handleMobileViewportChange);
@@ -14164,9 +14401,12 @@ function bindMobileDrawer() {
     clearTimeout(state.mobileResizeTimer);
     state.mobileResizeTimer = setTimeout(() => {
       if (sceneApi && sceneApi.resize) sceneApi.resize();
+      syncVisualViewport();
     }, 80);
   }, { passive: true });
   closeMobileDrawers();
+  syncVisualViewport();
+  updateFullscreenButton();
 }
 
 function bindEvents() {
