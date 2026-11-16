@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
 <title>东东坐标系实验室 · 三维数学</title>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230a101a'/%3E%3Ctext x='50' y='70' font-size='62' text-anchor='middle' fill='%235eead4'%3E%E2%88%91%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" crossorigin>
+<link rel="stylesheet" href="libs/katex.min.css">
+<link rel="modulepreload" href="libs/three.module.js" crossorigin>
 <style>
   :root {
     --bg: #05080e;
@@ -2409,7 +2409,118 @@
     .exercise-statement { font-size: 12px; }
   }
 
-</style>
+  /* ===== 手机竖屏：坐标台定住 + 上下滑动切换知识点 + 左右半屏抽屉 ===== */
+  @media (max-width: 980px) and (orientation: portrait) {
+    html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+    .app {
+      height: 100vh; height: 100svh;
+      display: block; overflow: hidden; position: relative;
+      background: #05080e;
+    }
+
+    .app > .stage {
+      position: fixed; inset: 0;
+      height: 100vh; height: 100svh;
+      z-index: 0;
+      pointer-events: auto;
+    }
+
+    .stage-topic-card, .range-panel, .point-panel, .readout, .stage-hint { display: none !important; }
+
+    #mSlides {
+      position: absolute; inset: 0; z-index: 5;
+      pointer-events: none;
+      overflow-y: auto; overflow-x: hidden;
+      scroll-snap-type: y mandatory;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      scrollbar-width: none;
+    }
+    #mSlides::-webkit-scrollbar { width: 0; height: 0; }
+
+    .m-slide {
+      position: relative;
+      height: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex; align-items: flex-end;
+      padding: 0 16px 104px;
+      box-sizing: border-box;
+      pointer-events: none;
+    }
+    /* 下半屏滑动带：从这里上下滑切换知识点 */
+    .m-slide::before {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 58%;
+      pointer-events: auto;
+    }
+    .m-card {
+      position: relative;
+      pointer-events: auto;
+      width: 100%;
+      padding: 14px 16px 16px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(6,11,20,.70), rgba(6,11,20,.93));
+      border: 1px solid rgba(151,174,214,.16);
+      -webkit-backdrop-filter: blur(10px);
+              backdrop-filter: blur(10px);
+      box-shadow: 0 18px 40px rgba(0,0,0,.45);
+    }
+    .m-meta {
+      font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--muted-2); display: flex; gap: 8px; align-items: baseline;
+    }
+    .m-num { color: var(--accent); font-weight: 600; }
+    .m-name { font-size: 19px; line-height: 1.3; margin: 6px 0 8px; color: var(--text); font-weight: 600; }
+    .m-formula { font-size: 15px; color: var(--accent); min-height: 22px; overflow-x: auto; white-space: nowrap; }
+    .m-desc {
+      margin-top: 8px; font-size: 11.5px; line-height: 1.6; color: var(--muted);
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    .sidebar, .exercise-panel {
+      position: fixed; top: 0; bottom: 0; z-index: 40;
+      width: 54vw; max-width: 300px; min-width: 0; height: 100%;
+      transition: transform .3s cubic-bezier(.22,.75,.2,1);
+      will-change: transform;
+    }
+    .sidebar { left: 0; transform: translateX(-102%); border-right: 1px solid var(--line); border-bottom: 0; }
+    .exercise-panel { right: 0; transform: translateX(102%); border-left: 1px solid var(--line); border-top: 0; }
+    .app.m-left-open .sidebar { transform: none; }
+    .app.m-right-open .exercise-panel { transform: none; }
+    .panel-inner { padding: 18px 16px 32px; }
+
+    #mBackdrop {
+      position: fixed; inset: 0; z-index: 35;
+      background: rgba(2,5,10,.55);
+      opacity: 0; pointer-events: none;
+      transition: opacity .28s ease;
+    }
+    .app.m-left-open #mBackdrop, .app.m-right-open #mBackdrop { opacity: 1; pointer-events: auto; }
+
+    .m-dock {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 45;
+      display: flex; justify-content: space-between;
+      padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+      pointer-events: none;
+    }
+    .m-dock button {
+      pointer-events: auto;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 15px; border-radius: 22px;
+      font-size: 12px; letter-spacing: .06em; color: var(--text);
+      background: rgba(10,18,30,.82);
+      border: 1px solid rgba(151,174,214,.22);
+      -webkit-backdrop-filter: blur(8px);
+              backdrop-filter: blur(8px);
+      cursor: pointer;
+    }
+    .m-dock button:active { background: rgba(20,34,52,.9); }
+    .m-dock button.is-on { border-color: rgba(94,234,212,.55); color: #bff7ee; }
+    .m-dock .m-ico { font-size: 13px; opacity: .85; }
+  }</style>
 </head>
 <body>
 <div class="app" id="app">
@@ -9406,13 +9517,13 @@
     document.documentElement.dataset.runtimeError = window.__MATH_ATLAS_ERROR__;
   });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" onerror="window.__KATEX_FAILED__=true"></script>
-<script src="https://cdn.jsdelivr.net/npm/mathjs@13.2.3/lib/browser/math.js" onerror="window.__MATHJS_FAILED__=true"></script>
+<script src="libs/katex.min.js" onerror="window.__KATEX_FAILED__=true"></script>
+<script src="libs/math.js" onerror="window.__MATHJS_FAILED__=true"></script>
 <script type="importmap">
 {
   "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    "three": "./libs/three.module.js",
+    "three/addons/": "./libs/addons/"
   }
 }
 </script>
@@ -11241,6 +11352,18 @@ function selectTopic(id) {
   if (sceneApi) sceneApi.renderVisual(item);
   dom.exercisePanel.scrollTop = 0;
 }
+  /* 移动端竖向滑动导航需要的最小接口 */
+  window.__labApi = {
+    get topics() { return TOPICS; },
+    get activeId() { return state.activeId; },
+    selectTopic,
+    katexRender(tex, el) {
+      try {
+        if (window.katex && tex) { katex.render(tex, el, { throwOnError: false, displayMode: false }); return true; }
+      } catch (e) {}
+      return false;
+    }
+  };
 
 /* =========================================================================
    4. Right panel: parameter lab, preset steps, answer
@@ -14569,5 +14692,129 @@ initScene()
   })
   .catch(showSceneFallback);
 </script>
-</body>
+<script>
+/* 手机竖屏：滑动切知识点 + 左右半屏抽屉 */
+(function () {
+  var PORTRAIT = window.matchMedia('(max-width: 980px) and (orientation: portrait)');
+  var cur = -1, raf = 0, wrap = null;
+
+  function closeDrawers() {
+    var app = document.querySelector('.app'); if (!app) return;
+    app.classList.remove('m-left-open', 'm-right-open');
+    var l = document.getElementById('mLeftBtn'), r = document.getElementById('mRightBtn');
+    if (l) l.classList.remove('is-on');
+    if (r) r.classList.remove('is-on');
+  }
+  function openDrawer(side) {
+    var app = document.querySelector('.app'); if (!app) return;
+    var left = side === 'left';
+    app.classList.toggle('m-left-open', left);
+    app.classList.toggle('m-right-open', !left);
+    document.getElementById('mLeftBtn').classList.toggle('is-on', left);
+    document.getElementById('mRightBtn').classList.toggle('is-on', !left);
+  }
+
+  function teardown() {
+    ['mSlides', 'mBackdrop'].forEach(function (id) {
+      var e = document.getElementById(id); if (e) e.remove();
+    });
+    var d = document.querySelector('.m-dock'); if (d) d.remove();
+    var app = document.querySelector('.app');
+    if (app) app.classList.remove('m-left-open', 'm-right-open');
+    wrap = null; cur = -1;
+  }
+
+  function build() {
+    if (!PORTRAIT.matches) { teardown(); return; }
+    if (document.getElementById('mSlides')) return;
+    var api = window.__labApi;
+    if (!api || !api.topics || !api.topics.length) return;
+    var topics = api.topics;
+    var app = document.querySelector('.app'), stage = document.querySelector('.stage');
+    if (!app || !stage) return;
+
+    wrap = document.createElement('div');
+    wrap.id = 'mSlides';
+    var frag = document.createDocumentFragment();
+    topics.forEach(function (t) {
+      var slide = document.createElement('div');
+      slide.className = 'm-slide';
+      slide.innerHTML =
+        '<div class="m-card">' +
+          '<div class="m-meta"><span class="m-num"></span><span class="m-group"></span></div>' +
+          '<div class="m-name"></div>' +
+          '<div class="m-formula"></div>' +
+          '<div class="m-desc"></div>' +
+        '</div>';
+      slide.querySelector('.m-num').textContent = t.number || '';
+      slide.querySelector('.m-group').textContent = (t.group && t.group.title) ? t.group.title : '';
+      slide.querySelector('.m-name').textContent = t.name || '';
+      slide.querySelector('.m-desc').textContent = t.description || '';
+      var f = slide.querySelector('.m-formula');
+      var ok = false;
+      try { ok = api.katexRender(t.formulaTex, f); } catch (e) { ok = false; }
+      if (!ok) f.textContent = t.formulaTex || '';
+      frag.appendChild(slide);
+    });
+    wrap.appendChild(frag);
+
+    var bd = document.createElement('div');
+    bd.id = 'mBackdrop';
+
+    var dock = document.createElement('div');
+    dock.className = 'm-dock';
+    dock.innerHTML =
+      '<button id="mLeftBtn" type="button"><span class="m-ico">☰</span><span>知识</span></button>' +
+      '<button id="mRightBtn" type="button"><span class="m-ico">ƒ</span><span>公式</span></button>';
+
+    app.appendChild(wrap);
+    app.appendChild(bd);
+    app.appendChild(dock);
+
+    document.getElementById('mLeftBtn').addEventListener('click', function (e) {
+      e.stopPropagation();
+      app.classList.contains('m-left-open') ? closeDrawers() : openDrawer('left');
+    });
+    document.getElementById('mRightBtn').addEventListener('click', function (e) {
+      e.stopPropagation();
+      app.classList.contains('m-right-open') ? closeDrawers() : openDrawer('right');
+    });
+    bd.addEventListener('click', closeDrawers);
+
+    function sync() {
+      if (!wrap) return;
+      var h = wrap.clientHeight || 1;
+      var idx = Math.round(wrap.scrollTop / h);
+      idx = Math.max(0, Math.min(topics.length - 1, idx));
+      if (idx === cur) return;
+      cur = idx;
+      var t = topics[idx];
+      if (t) { try { api.selectTopic(t.id); } catch (e) {} }
+    }
+    wrap.addEventListener('scroll', function () {
+      if (raf) return;
+      raf = requestAnimationFrame(function () { raf = 0; sync(); });
+    }, { passive: true });
+
+    var start = 0;
+    for (var k = 0; k < topics.length; k++) {
+      if (topics[k].id === api.activeId) { start = k; break; }
+    }
+    cur = start;
+    requestAnimationFrame(function () {
+      if (!wrap) return;
+      wrap.scrollTop = start * wrap.clientHeight;
+      sync();
+    });
+  }
+
+  function boot() { build(); }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else { setTimeout(boot, 120); }
+  if (PORTRAIT.addEventListener) PORTRAIT.addEventListener('change', function () { setTimeout(build, 80); });
+  window.addEventListener('orientationchange', function () { setTimeout(build, 250); });
+  window.addEventListener('resize', function () { setTimeout(build, 120); });
+})();
+</script></body>
 </html>
