@@ -2521,6 +2521,31 @@
     .m-dock button:active { background: rgba(20,34,52,.9); }
     .m-dock button.is-on { border-color: rgba(94,234,212,.55); color: #bff7ee; }
     .m-dock .m-ico { font-size: 13px; opacity: .85; }
+    /* 卡片可点击收起，减少遮挡 */
+    .m-card { transition: padding .24s ease, background .24s ease; }
+    .m-card::after {
+      content: '⌃';
+      position: absolute; right: 12px; top: 9px;
+      font-size: 11px; line-height: 1; opacity: .32;
+      pointer-events: none;
+    }
+    .m-card.collapsed::after { content: '⌄'; }
+    .m-card.collapsed { padding: 10px 14px 11px; }
+    .m-card.collapsed .m-formula,
+    .m-card.collapsed .m-desc { display: none; }
+    .m-card.collapsed .m-name {
+      font-size: 15px; margin: 3px 0 0; line-height: 1.25;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* 顶部按钮浮到滑动层之上（stage 的 stacking context 会困住子元素，所以 JS 把它挪出来） */
+    .stage-topbar.m-topbar-lifted {
+      position: fixed;
+      top: 10px; left: 10px; right: 10px;
+      margin: 0;
+      z-index: 30;
+      pointer-events: auto;
+    }
   }</style>
 </head>
 <body>
@@ -14743,6 +14768,14 @@ initScene()
   }
 
   function teardown() {
+    var tb = document.querySelector('.stage-topbar');
+    if (tb && tb.classList.contains('m-topbar-lifted')) {
+      tb.classList.remove('m-topbar-lifted');
+      if (window.__mTopbarHome && window.__mTopbarHome.isConnected) {
+        window.__mTopbarHome.appendChild(tb);
+      }
+      window.__mTopbarHome = null;
+    }
     ['mSlides', 'mBackdrop'].forEach(function (id) {
       var e = document.getElementById(id); if (e) e.remove();
     });
@@ -14798,6 +14831,24 @@ initScene()
     app.appendChild(wrap);
     app.appendChild(bd);
     app.appendChild(dock);
+
+    /* 卡片点击收起 / 展开 */
+    Array.prototype.forEach.call(wrap.children, function (slide) {
+      var card = slide.querySelector('.m-card');
+      if (!card) return;
+      card.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        card.classList.toggle('collapsed');
+      });
+    });
+
+    /* 顶部四个按钮（3D/2D、自动旋转、重置视角、图表）：挪出 stage 的层叠上下文，否则被滑动层挡住点不到 */
+    var topbar = document.querySelector('.stage-topbar');
+    if (topbar && topbar.parentNode) {
+      window.__mTopbarHome = topbar.parentNode;
+      document.body.appendChild(topbar);
+      topbar.classList.add('m-topbar-lifted');
+    }
 
     document.getElementById('mLeftBtn').addEventListener('click', function (e) {
       e.stopPropagation();
