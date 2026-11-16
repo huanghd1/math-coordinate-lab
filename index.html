@@ -2071,20 +2071,32 @@
     .panel-inner { padding: 20px 17px 32px; }
   }
   @media (max-width: 980px) {
-    body { overflow: auto; }
+    /* 手机端：三屏滑动，整屏吸附（目录 → 画布 → 练习） */
+    html { height: 100%; }
+    body {
+      overflow-x: hidden;
+      overflow-y: auto;
+      height: auto;
+      scroll-snap-type: y proximity;
+      -webkit-overflow-scrolling: touch;
+    }
     .app {
       height: auto;
       min-height: 100vh;
       display: block;
       overflow: visible;
     }
+
     .sidebar {
       width: auto;
-      height: auto;
-      max-height: 42vh;
+      height: 100vh;
+      height: 100svh;
+      max-height: none;
       border-right: 0;
       border-bottom: 1px solid var(--line);
       padding-bottom: 10px;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
     }
     .app.left-collapsed .sidebar,
     .app.right-collapsed .exercise-panel {
@@ -2092,14 +2104,26 @@
       opacity: 1;
       pointer-events: auto;
     }
-    .tree { max-height: 23vh; }
+    .tree { flex: 1 1 auto; max-height: none; overflow-y: auto; }
     .sidebar-foot { display: none; }
-    .stage { height: 68vh; min-height: 540px; }
+
+    .stage {
+      height: 100vh;
+      height: 100svh;
+      min-height: 0;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+
     .exercise-panel {
       width: auto;
-      height: auto;
+      height: 100vh;
+      height: 100svh;
       border-left: 0;
       border-top: 1px solid var(--line);
+      overflow-y: auto;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
     }
     .panel-inner { max-width: 640px; margin: 0 auto; padding: 24px 20px 40px; }
     .stage-topic-card { width: 260px; }
