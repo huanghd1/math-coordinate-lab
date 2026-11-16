@@ -2429,7 +2429,8 @@
 
     #mSlides {
       position: absolute; inset: 0; z-index: 5;
-      pointer-events: none;
+      pointer-events: auto;
+      touch-action: pan-y;
       overflow-y: auto; overflow-x: hidden;
       scroll-snap-type: y mandatory;
       -webkit-overflow-scrolling: touch;
@@ -11356,6 +11357,7 @@ function selectTopic(id) {
   window.__labApi = {
     get topics() { return TOPICS; },
     get activeId() { return state.activeId; },
+    get scene() { return sceneApi; },
     selectTopic,
     katexRender(tex, el) {
       try {
@@ -14401,6 +14403,32 @@ function buildMatrixPlot(item) {
   });
 
   sceneApi = {
+    __mobile: {
+      get is3D() { return state.viewMode === '3d'; },
+      orbit(dx, dy) {
+        const cam = (state.viewMode === '3d') ? perspCamera : orthoCamera;
+        const ctrl = activeControls;
+        if (!cam || !ctrl || !THREE) return;
+        const off = cam.position.clone().sub(ctrl.target);
+        const sph = new THREE.Spherical().setFromVector3(off);
+        sph.theta -= dx * 0.0062;
+        sph.phi -= dy * 0.0062;
+        if (state.viewMode === '3d') {
+          sph.phi = Math.max(0.08, Math.min(Math.PI - 0.08, sph.phi));
+        } else {
+          sph.phi = Math.PI / 2;
+        }
+        if (sph.radius < 0.2) sph.radius = 0.2;
+        off.setFromSpherical(sph);
+        cam.position.copy(ctrl.target).add(off);
+        cam.lookAt(ctrl.target);
+        ctrl.update();
+      },
+      cameraPosition() {
+        const cam = (state.viewMode === '3d') ? perspCamera : orthoCamera;
+        return cam ? cam.position.toArray() : null;
+      }
+    },
     renderVisual(item) {
       renderVisual(item);
     },
@@ -14795,6 +14823,35 @@ initScene()
       if (raf) return;
       raf = requestAnimationFrame(function () { raf = 0; sync(); });
     }, { passive: true });
+
+    /* 方向分离：竖向翻页切知识点，横向拖动转 3D（单手拇指也够得到） */
+    var gLock = null, gsx = 0, gsy = 0, glx = 0, gly = 0;
+    wrap.addEventListener('touchstart', function (e) {
+      if (e.touches.length !== 1) { gLock = 'multi'; return; }
+      gLock = null;
+      gsx = glx = e.touches[0].clientX;
+      gsy = gly = e.touches[0].clientY;
+    }, { passive: true });
+
+    wrap.addEventListener('touchmove', function (e) {
+      if (e.touches.length !== 1 || gLock === 'multi') return;
+      var tp = e.touches[0];
+      if (!gLock) {
+        var adx = Math.abs(tp.clientX - gsx), ady = Math.abs(tp.clientY - gsy);
+        if (adx < 6 && ady < 6) return;
+        gLock = adx > ady ? 'h' : 'v';
+      }
+      if (gLock === 'h') {
+        e.preventDefault();
+        var dx = tp.clientX - glx, dy = tp.clientY - gly;
+        glx = tp.clientX; gly = tp.clientY;
+        var sc = api.scene;
+        if (sc && sc.__mobile) sc.__mobile.orbit(dx, dy);
+      }
+    }, { passive: false });
+
+    wrap.addEventListener('touchend', function () { gLock = null; }, { passive: true });
+    wrap.addEventListener('touchcancel', function () { gLock = null; }, { passive: true });
 
     var start = 0;
     for (var k = 0; k < topics.length; k++) {
